@@ -1,0 +1,11 @@
+numpy>=1.26
+pandas>=2.2
+scikit-learn>=1.6
+imbalanced-learn>=0.13
+pyyaml>=6.0
+matplotlib>=3.10
+openpyxl>=3.1
+scipy>=1.15
+torch>=2.6
+catboost>=1.2
+xgboost>=2.1
