@@ -1,5 +1,44 @@
 
 import numpy as np
+def boundary_safe(candidate, X_minority, X_majority,
+                  gamma=0.90):
+    """
+    Implements manuscript Equations (16)-(19).
+
+    Returns:
+        accepted: bool
+        dm: nearest minority distance
+        dM: nearest majority distance
+    """
+    if not (0.0 < gamma < 1.0):
+        raise ValueError("gamma must be in (0, 1).")
+
+    x = np.asarray(candidate, dtype=float)
+    Xm = np.asarray(X_minority, dtype=float)
+    XM = np.asarray(X_majority, dtype=float)
+
+    if Xm.ndim != 2 or XM.ndim != 2:
+        raise ValueError("Class supports must be 2D arrays.")
+    if len(Xm) == 0 or len(XM) == 0:
+        raise ValueError("Both class supports must be nonempty.")
+    if Xm.shape[1] != x.size or XM.shape[1] != x.size:
+        raise ValueError("Feature dimension mismatch.")
+
+    # Eq. (16): nearest observed minority distance
+    dm = float(np.min(np.linalg.norm(Xm - x, axis=1)))
+
+    # Eq. (17): nearest observed majority distance
+    dM = float(np.min(np.linalg.norm(XM - x, axis=1)))
+
+    # Eq. (19): exact acceptance rule
+    accepted = (
+        np.isfinite(dm)
+        and np.isfinite(dM)
+        and dM > 0.0
+        and dm <= gamma * dM
+    )
+
+    return bool(accepted), dm, dM
 
 def pca_bounded_perturbation(
     neighborhood,
